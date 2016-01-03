@@ -26,7 +26,8 @@ EOF
 sudo dhclient
 SCRIPT
 
-ClusterNamePrefix = "cluster_"
+# Variables
+clusterNamePrefix = "cluster_"
 numNodes = 3
 ipAddrPrefix = "10.200.50.10"
 createMaster = true
@@ -44,11 +45,11 @@ Vagrant.configure("2") do |config|
   config.hostmanager.ignore_private_ip = false
 
   if createMaster
-    master = (ClusterNamePrefix + "master").to_sym
+    master = (clusterNamePrefix + "master").to_sym
     # Configure Master
     config.vm.define master do |master|
     master.vm.provider :virtualbox do |v|
-	    v.name = ClusterNamePrefix + "master"
+	    v.name = clusterNamePrefix + "master"
 	  end
 	  master.vm.network :private_network, ip: ipAddrPrefix + 0.to_s
 	  master.vm.provision :shell, :inline => $hosts_script
@@ -58,7 +59,7 @@ Vagrant.configure("2") do |config|
   end
   
 	1.upto(numNodes) do |num|
-		nodeName = (ClusterNamePrefix + "node" + num.to_s).to_sym
+		nodeName = (clusterNamePrefix + "node" + num.to_s).to_sym
         # Configure Nodes
 		config.vm.define nodeName do |node|
 			node.vm.box = "ubuntu/trusty64"
@@ -68,7 +69,7 @@ Vagrant.configure("2") do |config|
 			  node.vm.provision :shell, :inline => $slave_script
 			end
 			node.vm.provider "virtualbox" do |v|
-				v.name = ClusterNamePrefix + "node" + num.to_s
+				v.name = clusterNamePrefix + "node" + num.to_s
 			end
 		end
 	end
